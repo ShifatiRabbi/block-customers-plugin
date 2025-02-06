@@ -16,10 +16,12 @@ if (!defined('ABSPATH')) {
 require_once plugin_dir_path(__FILE__) . 'includes/class-admin.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-checkout.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-block-list.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-import-export.php';
 
 // Initialize the plugin
 function pluginmakersr_block_customers_init() {
     new PluginMakerSR_Block_Customers_Admin();
     new PluginMakerSR_Block_Customers_Checkout();
+    new PluginMakerSR_Block_Customers_Import_Export();
 }
 add_action('plugins_loaded', 'pluginmakersr_block_customers_init');

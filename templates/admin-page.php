@@ -1,6 +1,7 @@
 <div class="wrap"><h1>Block Customers</h1>
 
 <?php
+PluginMakerSR_Block_Customers_Import_Export::render_buttons();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $block_list = new PluginMakerSR_Block_Customers_Block_List();
 
