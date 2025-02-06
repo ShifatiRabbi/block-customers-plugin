@@ -1,0 +1,41 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PluginMakerSR Block Customers\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Block Customers"
+msgstr ""
+
+msgid "You are not allowed to place orders."
+msgstr ""
+
+msgid "Max block entries reached."
+msgstr ""
+
+msgid "For adding unlimited block entries, please buy the premium pack."
+msgstr ""
+
+msgid "Upgrade to Premium"
+msgstr ""
+
+msgid "Buy Premium Now"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Block added successfully."
+msgstr ""
+
+msgid "Block removed successfully."
+msgstr ""
+
+msgid "Maximum block entries reached. Upgrade to premium for unlimited blocks."
+msgstr ""
+
+msgid "No blocks added yet."
+msgstr ""
