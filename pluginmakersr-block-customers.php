@@ -3,7 +3,7 @@
 Plugin Name: Block Customers
 Plugin URI: https://PluginMakerSR.com
 Description: Block, suspend, or ban customers based on IP, ZIP code, email address, name, or combined ZIP + Street Address from ordering in your website. These people can visit but can't place any order. It's an advanced plugin for helping avoid spamming orders.
-Version: 1.6.9
+Version: 1.7.0
 Author: PluginMakerSR
 Author URI: https://PluginMakerSR.com
 */
