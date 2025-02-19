@@ -38,27 +38,27 @@
 
     <!-- Add Block Form -->
     <form method="POST" style="margin-bottom:20px; padding:20px; border: 1px solid #ddd; background-color: #f9f9f9;">
-		<label for="block_type"><strong>Block Type:</strong></label>
-		<select id="block_type" name="block_type" style="width: 200px; margin-bottom: 10px;">
-			<option value="ip">IP Address</option>
-			<option value="zip">ZIP Code</option>
-			<option value="email">Email Address</option>
-			<option value="name">Name</option>
-			<option value="address">Street Address</option>
-			<option value="zip_street">ZIP + Street Address</option>
-		</select>
+        <label for="block_type"><strong>Block Type:</strong></label>
+        <select id="block_type" name="block_type" style="width: 200px; margin-bottom: 10px;">
+            <option value="ip">IP Address</option>
+            <option value="zip">ZIP Code</option>
+            <option value="email">Email Address</option>
+            <option value="name">Name</option>
+            <option value="address">Street Address</option>
+            <option value="zip_street">ZIP + Street Address</option>
+        </select>
 
-		<div id="instruction_text" style="margin-bottom: 20px;">
-			<p><em>Select a block type to view instructions.</em></p>
-		</div>
+        <div id="instruction_text" style="margin-bottom: 20px;">
+            <p><em>Select a block type to view instructions.</em></p>
+        </div>
 
-		<input type="text" name="block_value" placeholder="Enter value to block" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-		<button type="submit" name="add_block" class="button button-primary" style="margin-top: 10px;">Add Block</button>
-	</form>
-	
-	<br><br>
-	
-	<!-- Filter Section -->
+        <input type="text" name="block_value" placeholder="Enter value to block" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+        <button type="submit" name="add_block" class="button button-primary" style="margin-top: 10px;">Add Block</button>
+    </form>
+
+    <br><br>
+
+    <!-- Filter Section -->
     <div class="filter-section">
         <label for="filter_type"><strong>Filter by Type:</strong></label>
         <select id="filter_type">
@@ -72,8 +72,8 @@
         </select>
         <button id="filter_button" class="button button-primary">Filter</button>
     </div>
-	<br>
-	
+    <br>
+
     <!-- Block List Table -->
     <table class="wp-list-table widefat fixed striped">
         <thead>

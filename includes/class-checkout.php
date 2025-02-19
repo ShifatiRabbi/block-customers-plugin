@@ -15,28 +15,46 @@ class PluginMakerSR_Block_Customers_Checkout {
         $this->block_list = get_option('pluginmakersr_block_list', []);
         error_log('Block list: ' . print_r($this->block_list, true)); // Debug statement
 
-        // Normalize customer data (billing and shipping)
+        // Retrieve billing settings
+        $billing_name_field_type = get_option('pluginmakersr_billing_name_field_type', 'default');
+        $billing_name_custom_field = get_option('pluginmakersr_billing_name_custom_field', 'billing_full_name');
+        $billing_email_field_type = get_option('pluginmakersr_billing_email_field_type', 'default');
+        $billing_email_custom_field = get_option('pluginmakersr_billing_email_custom_field', 'billing_email');
+        $billing_zip_field_type = get_option('pluginmakersr_billing_zip_field_type', 'default');
+        $billing_zip_custom_field = get_option('pluginmakersr_billing_zip_custom_field', 'billing_postcode');
+        $billing_address_field_type = get_option('pluginmakersr_billing_address_field_type', 'default');
+        $billing_address_custom_field = get_option('pluginmakersr_billing_address_custom_field', 'billing_address_1');
+
+        // Retrieve shipping settings
+        $shipping_name_field_type = get_option('pluginmakersr_shipping_name_field_type', 'default');
+        $shipping_name_custom_field = get_option('pluginmakersr_shipping_name_custom_field', 'shipping_full_name');
+        $shipping_zip_field_type = get_option('pluginmakersr_shipping_zip_field_type', 'default');
+        $shipping_zip_custom_field = get_option('pluginmakersr_shipping_zip_custom_field', 'shipping_postcode');
+        $shipping_address_field_type = get_option('pluginmakersr_shipping_address_field_type', 'default');
+        $shipping_address_custom_field = get_option('pluginmakersr_shipping_address_custom_field', 'shipping_address_1');
+
+        // Normalize customer data
         $customer_ip = $_SERVER['REMOTE_ADDR'];
 
         // Billing data
-        $billing_zip = strtolower(str_replace([' ', ','], '', $data['billing_postcode'])); // Normalize billing ZIP
-        $billing_email = strtolower(trim($data['billing_email'])); // Normalize billing email
-        $billing_name = strtolower(str_replace([' ', ','], '', $data['billing_first_name'] . $data['billing_last_name'])); // Normalize billing name
-        $billing_address = strtolower(str_replace([' ', ','], '', $data['billing_address_1'])); // Normalize billing address
+        $customer_email = $this->get_field_value($data, $billing_email_field_type, $billing_email_custom_field, 'billing_email');
+        $customer_name = $this->get_field_value($data, $billing_name_field_type, $billing_name_custom_field, 'billing_first_name', 'billing_last_name');
+        $customer_zip = $this->get_field_value($data, $billing_zip_field_type, $billing_zip_custom_field, 'billing_postcode');
+        $customer_address = $this->get_field_value($data, $billing_address_field_type, $billing_address_custom_field, 'billing_address_1');
 
         // Shipping data
-        $shipping_zip = strtolower(str_replace([' ', ','], '', $data['shipping_postcode'])); // Normalize shipping ZIP
-        $shipping_name = strtolower(str_replace([' ', ','], '', $data['shipping_first_name'] . $data['shipping_last_name'])); // Normalize shipping name
-        $shipping_address = strtolower(str_replace([' ', ','], '', $data['shipping_address_1'])); // Normalize shipping address
+        $shipping_name = $this->get_field_value($data, $shipping_name_field_type, $shipping_name_custom_field, 'shipping_first_name', 'shipping_last_name');
+        $shipping_zip = $this->get_field_value($data, $shipping_zip_field_type, $shipping_zip_custom_field, 'shipping_postcode');
+        $shipping_address = $this->get_field_value($data, $shipping_address_field_type, $shipping_address_custom_field, 'shipping_address_1');
 
         // Debug customer data
         error_log('Customer IP: ' . $customer_ip);
-        error_log('Billing ZIP: ' . $billing_zip);
-        error_log('Billing Email: ' . $billing_email);
-        error_log('Billing Name: ' . $billing_name);
-        error_log('Billing Address: ' . $billing_address);
-        error_log('Shipping ZIP: ' . $shipping_zip);
+        error_log('Customer Email: ' . $customer_email);
+        error_log('Customer Name: ' . $customer_name);
+        error_log('Customer ZIP: ' . $customer_zip);
+        error_log('Customer Address: ' . $customer_address);
         error_log('Shipping Name: ' . $shipping_name);
+        error_log('Shipping ZIP: ' . $shipping_zip);
         error_log('Shipping Address: ' . $shipping_address);
 
         foreach ($this->block_list as $block) {
@@ -53,40 +71,52 @@ class PluginMakerSR_Block_Customers_Checkout {
                     }
                     break;
                 case 'zip':
-                    if ($billing_zip === $block_value || $shipping_zip === $block_value) {
+                    if ($customer_zip === $block_value || $shipping_zip === $block_value) {
                         $errors->add('validation', 'You are not allowed to place orders.');
                         break 2;
                     }
                     break;
                 case 'email':
-                    if ($billing_email === $block_value) {
+                    if ($customer_email === $block_value) {
                         $errors->add('validation', 'You are not allowed to place orders.');
                         break 2;
                     }
                     break;
                 case 'name':
-                    if ($billing_name === $block_value || $shipping_name === $block_value) {
+                    if ($customer_name === $block_value || $shipping_name === $block_value) {
                         $errors->add('validation', 'You are not allowed to place orders.');
                         break 2;
                     }
                     break;
                 case 'address':
-                    if ($billing_address === $block_value || $shipping_address === $block_value) {
+                    if ($customer_address === $block_value || $shipping_address === $block_value) {
                         $errors->add('validation', 'You are not allowed to place orders.');
                         break 2;
                     }
                     break;
                 case 'zip_street':
-                    // Normalize ZIP and Street Address separately for billing and shipping
-                    $billing_zip_street_combo = $billing_zip . '|' . $billing_address;
+                    $zip_street_combo = $customer_zip . '|' . $customer_address;
                     $shipping_zip_street_combo = $shipping_zip . '|' . $shipping_address;
-
-                    // Compare with block value
-                    if ($billing_zip_street_combo === $block_value || $shipping_zip_street_combo === $block_value) {
+                    if ($zip_street_combo === $block_value || $shipping_zip_street_combo === $block_value) {
                         $errors->add('validation', 'You are not allowed to place orders.');
                         break 2;
                     }
                     break;
+            }
+        }
+    }
+
+    /**
+     * Get the value of a field based on settings.
+     */
+    private function get_field_value($data, $field_type, $custom_field, $default_field1, $default_field2 = '') {
+        if ($field_type === 'custom') {
+            return isset($data[$custom_field]) ? strtolower(str_replace([' ', ','], '', $data[$custom_field])) : '';
+        } else {
+            if ($default_field2) {
+                return isset($data[$default_field1]) && isset($data[$default_field2]) ? strtolower(str_replace([' ', ','], '', $data[$default_field1] . $data[$default_field2])) : '';
+            } else {
+                return isset($data[$default_field1]) ? strtolower(str_replace([' ', ','], '', $data[$default_field1])) : '';
             }
         }
     }
