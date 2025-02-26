@@ -174,3 +174,34 @@ h2 {
 .license-form button {
     margin-top: 10px;
 }
+
+/* Card layout for "Block by Full Data" */
+.block-card {
+    display: inline-block;
+    width: 23%;
+    margin: 1%;
+    padding: 10px;
+    border: 1px solid red;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.block-card-item {
+    margin-bottom: 5px;
+}
+
+/* Default table row for other block types */
+.block-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+/* Input fields for "Block by Full Data" */
+#full_data_fields input {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+}

@@ -9,7 +9,19 @@
 
         if (isset($_POST['add_block'])) {
             $type = sanitize_text_field($_POST['block_type']);
-            $value = sanitize_text_field($_POST['block_value']);
+            $value = '';
+
+            if ($type === 'full_data') {
+                $name = isset($_POST['full_data_name']) ? sanitize_text_field($_POST['full_data_name']) : '';
+                $email = isset($_POST['full_data_email']) ? sanitize_text_field($_POST['full_data_email']) : '';
+                $phone = isset($_POST['full_data_phone']) ? sanitize_text_field($_POST['full_data_phone']) : '';
+                $street_address = isset($_POST['full_data_street_address']) ? sanitize_text_field($_POST['full_data_street_address']) : '';
+                $zip = isset($_POST['full_data_zip']) ? sanitize_text_field($_POST['full_data_zip']) : '';
+
+                $value = implode('|', array_filter([$name, $email, $phone, $street_address, $zip]));
+            } else {
+                $value = sanitize_text_field($_POST['block_value']);
+            }
 
             if ($block_list->add_block($type, $value)) {
                 echo '<div class="notice notice-success"><p>Block added successfully.</p></div>';
@@ -47,13 +59,29 @@
             <option value="address">Street Address</option>
             <option value="zip_street">ZIP + Street Address</option>
             <option value="phone">Phone Number</option>
+            <option value="full_data">Block by Full Data</option> <!-- New block type -->
         </select>
 
         <div id="instruction_text" style="margin-bottom: 20px;">
             <p><em>Select a block type to view instructions.</em></p>
         </div>
 
-        <input type="text" name="block_value" placeholder="Enter value to block" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+        <!-- Input fields for "Block by Full Data" -->
+        <div id="full_data_fields" style="display: none;">
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="text" name="full_data_name" placeholder="Full Name" style="width: 20%;">
+                <input type="text" name="full_data_email" placeholder="Email" style="width: 20%;">
+                <input type="text" name="full_data_phone" placeholder="Phone" style="width: 20%;">
+                <input type="text" name="full_data_street_address" placeholder="Street Address" style="width: 20%;">
+                <input type="text" name="full_data_zip" placeholder="ZIP" style="width: 20%;">
+            </div>
+        </div>
+
+        <!-- Default input field for other block types -->
+        <div id="default_field">
+            <input type="text" name="block_value" placeholder="Enter value to block" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+        </div>
+
         <button type="submit" name="add_block" class="button button-primary" style="margin-top: 10px;">Add Block</button>
     </form>
 
@@ -71,86 +99,110 @@
             <option value="address">Street Address</option>
             <option value="zip_street">ZIP + Street Address</option>
             <option value="phone">Phone Number</option>
+            <option value="full_data">Block by Full Data</option> <!-- New filter option -->
         </select>
         <button id="filter_button" class="button button-primary">Filter</button>
     </div>
     <br>
 
     <!-- Block List Table -->
-    <table class="wp-list-table widefat fixed striped">
-        <thead>
-            <tr>
-                <th>Type</th>
-                <th>Value</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="block_list_table">
-            <?php if (!empty($blocks)) : ?>
-                <?php foreach ($blocks as $index => $block) : ?>
-                    <tr data-type="<?php echo esc_attr($block['type']); ?>">
-                        <td><?php echo esc_html($block['type']); ?></td>
-                        <td><?php echo esc_html($block['value']); ?></td>
-                        <td>
+    <div id="block_list_table">
+        <?php if (!empty($blocks)) : ?>
+            <?php foreach ($blocks as $index => $block) : ?>
+                <?php if ($block['type'] === 'full_data') : ?>
+                    <!-- Card layout for "Block by Full Data" -->
+                    <div class="block-card" data-type="<?php echo esc_attr($block['type']); ?>">
+                        <?php
+                        $values = explode('|', $block['value']);
+                        $labels = ['Full Name', 'Email', 'Phone', 'Street Address', 'ZIP'];
+                        ?>
+                        <?php foreach ($values as $i => $value) : ?>
+                            <?php if (!empty($value)) : ?>
+                                <div class="block-card-item">
+                                    <strong><?php echo esc_html($labels[$i]); ?>:</strong> <?php echo esc_html($value); ?>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="block_index" value="<?php echo $index; ?>">
+                            <button type="submit" name="remove_block" class="button button-secondary">Remove</button>
+                        </form>
+                    </div>
+                <?php else : ?>
+                    <!-- Default table row for other block types -->
+                    <div class="block-row" data-type="<?php echo esc_attr($block['type']); ?>">
+                        <div><?php echo esc_html($block['type']); ?></div>
+                        <div><?php echo esc_html($block['value']); ?></div>
+                        <div>
                             <form method="POST" style="display:inline;">
                                 <input type="hidden" name="block_index" value="<?php echo $index; ?>">
                                 <button type="submit" name="remove_block" class="button button-secondary">Remove</button>
                             </form>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else : ?>
-                <tr>
-                    <td colspan="3">No blocks added yet.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <p>No blocks added yet.</p>
+        <?php endif; ?>
+    </div>
 </div>
 
 <script>
     document.getElementById("block_type").addEventListener("change", function() {
         var selectedType = this.value;
         var instructionText = "";
-        switch (selectedType) {
-            case "ip":
-                instructionText = "<p><strong>Example:</strong> Enter the IP address you wish to block (e.g., 192.168.1.1). This will block all orders from this specific IP.</p>";
-                break;
-            case "zip":
-                instructionText = "<p><strong>Example:</strong> Enter the ZIP code to block customers from a specific region (e.g., 44001). This will block all customers from that area.</p>";
-                break;
-            case "email":
-                instructionText = "<p><strong>Example:</strong> Enter the email address you wish to block (e.g., example@gmail.com). This will block any user with that email address.</p>";
-                break;
-            case "name":
-                instructionText = "<p><strong>Example:</strong> Enter the combined name without spaces (e.g., MatthewJohn). This will block the user with that exact name combination.</p>";
-                break;
-            case "address":
-                instructionText = "<p><strong>Example:</strong> Enter the street address (e.g., 123 Main St). The address should be normalized without spaces or commas.</p>";
-                break;
-            case "zip_street":
-                instructionText = "<p><strong>Example:</strong> Enter both ZIP and Street Address combined (e.g., 44001|123 Main St). This will block customers matching both ZIP and street address.</p>";
-                break;
-            case "phone":
-                instructionText = "<p><strong>Example:</strong> Enter the phone number you wish to block (e.g., +8801712345678 or 01712345678). This will block all orders from this specific phone number.</p>";
-                break;
-            default:
-                instructionText = "<p><strong>Example:</strong> Enter the IP address you wish to block (e.g., 192.168.1.1). This will block all orders from this specific IP.</p>";
+        var fullDataFields = document.getElementById("full_data_fields");
+        var defaultField = document.getElementById("default_field");
+
+        if (selectedType === "full_data") {
+            fullDataFields.style.display = "block";
+            defaultField.style.display = "none";
+            instructionText = "<p><strong>Example:</strong> Enter all details to block a customer by full data.</p>";
+        } else {
+            fullDataFields.style.display = "none";
+            defaultField.style.display = "block";
+            switch (selectedType) {
+                case "ip":
+                    instructionText = "<p><strong>Example:</strong> Enter the IP address you wish to block (e.g., 192.168.1.1). This will block all orders from this specific IP.</p>";
+                    break;
+                case "zip":
+                    instructionText = "<p><strong>Example:</strong> Enter the ZIP code to block customers from a specific region (e.g., 44001). This will block all customers from that area.</p>";
+                    break;
+                case "email":
+                    instructionText = "<p><strong>Example:</strong> Enter the email address you wish to block (e.g., example@gmail.com). This will block any user with that email address.</p>";
+                    break;
+                case "name":
+                    instructionText = "<p><strong>Example:</strong> Enter the combined name without spaces (e.g., MatthewJohn). This will block the user with that exact name combination.</p>";
+                    break;
+                case "address":
+                    instructionText = "<p><strong>Example:</strong> Enter the street address (e.g., 123 Main St). The address should be normalized without spaces or commas.</p>";
+                    break;
+                case "zip_street":
+                    instructionText = "<p><strong>Example:</strong> Enter both ZIP and Street Address combined (e.g., 44001|123 Main St). This will block customers matching both ZIP and street address.</p>";
+                    break;
+                case "phone":
+                    instructionText = "<p><strong>Example:</strong> Enter the phone number you wish to block (e.g., +8801712345678 or 01712345678). This will block all orders from this specific phone number.</p>";
+                    break;
+                default:
+                    instructionText = "<p><em>Please select a block type to view instructions.</em></p>";
+            }
         }
+
         document.getElementById("instruction_text").innerHTML = instructionText;
     });
 
     // Filter functionality
     document.getElementById("filter_button").addEventListener("click", function() {
         var filterType = document.getElementById("filter_type").value;
-        var rows = document.querySelectorAll("#block_list_table tr");
+        var blocks = document.querySelectorAll("#block_list_table .block-card, #block_list_table .block-row");
 
-        rows.forEach(function(row) {
-            var rowType = row.getAttribute("data-type");
-            if (filterType === "all" || rowType === filterType) {
-                row.style.display = "";
+        blocks.forEach(function(block) {
+            var blockType = block.getAttribute("data-type");
+            if (filterType === "all" || blockType === filterType) {
+                block.style.display = "";
             } else {
-                row.style.display = "none";
+                block.style.display = "none";
             }
         });
     });
