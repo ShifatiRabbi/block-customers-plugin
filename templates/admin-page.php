@@ -46,6 +46,7 @@
             <option value="name">Name</option>
             <option value="address">Street Address</option>
             <option value="zip_street">ZIP + Street Address</option>
+            <option value="phone">Phone Number</option>
         </select>
 
         <div id="instruction_text" style="margin-bottom: 20px;">
@@ -69,6 +70,7 @@
             <option value="name">Name</option>
             <option value="address">Street Address</option>
             <option value="zip_street">ZIP + Street Address</option>
+            <option value="phone">Phone Number</option>
         </select>
         <button id="filter_button" class="button button-primary">Filter</button>
     </div>
@@ -129,8 +131,11 @@
             case "zip_street":
                 instructionText = "<p><strong>Example:</strong> Enter both ZIP and Street Address combined (e.g., 44001|123 Main St). This will block customers matching both ZIP and street address.</p>";
                 break;
+            case "phone":
+                instructionText = "<p><strong>Example:</strong> Enter the phone number you wish to block (e.g., +8801712345678 or 01712345678). This will block all orders from this specific phone number.</p>";
+                break;
             default:
-                instructionText = "<p><em>Please select a block type to view instructions.</em></p>";
+                instructionText = "<p><strong>Example:</strong> Enter the IP address you wish to block (e.g., 192.168.1.1). This will block all orders from this specific IP.</p>";
         }
         document.getElementById("instruction_text").innerHTML = instructionText;
     });

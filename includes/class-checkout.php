@@ -10,6 +10,20 @@ class PluginMakerSR_Block_Customers_Checkout {
         add_action('woocommerce_after_checkout_validation', [$this, 'check_blocked_customers'], 10, 2);
     }
 
+    private function normalize_phone($phone) {
+        // Remove all non-numeric characters (e.g., spaces, dashes, plus signs)
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+
+        // Remove leading zeros (if any) and ensure the phone number starts with the country code
+        // Example: 01712345678 -> 1712345678 (for Bangladesh)
+        // You can customize this logic based on your country's phone number format
+        if (strlen($phone) > 10) {
+            $phone = ltrim($phone, '0');
+        }
+
+        return $phone;
+    }
+
     public function check_blocked_customers($data, $errors) {
         error_log('check_blocked_customers hook fired'); // Debug statement
         $this->block_list = get_option('pluginmakersr_block_list', []);
@@ -24,6 +38,8 @@ class PluginMakerSR_Block_Customers_Checkout {
         $billing_zip_custom_field = get_option('pluginmakersr_billing_zip_custom_field', 'billing_postcode');
         $billing_address_field_type = get_option('pluginmakersr_billing_address_field_type', 'default');
         $billing_address_custom_field = get_option('pluginmakersr_billing_address_custom_field', 'billing_address_1');
+        $billing_phone_field_type = get_option('pluginmakersr_billing_phone_field_type', 'default');
+        $billing_phone_custom_field = get_option('pluginmakersr_billing_phone_custom_field', 'billing_phone');
 
         // Retrieve shipping settings
         $shipping_name_field_type = get_option('pluginmakersr_shipping_name_field_type', 'default');
@@ -41,6 +57,7 @@ class PluginMakerSR_Block_Customers_Checkout {
         $customer_name = $this->get_field_value($data, $billing_name_field_type, $billing_name_custom_field, 'billing_first_name', 'billing_last_name');
         $customer_zip = $this->get_field_value($data, $billing_zip_field_type, $billing_zip_custom_field, 'billing_postcode');
         $customer_address = $this->get_field_value($data, $billing_address_field_type, $billing_address_custom_field, 'billing_address_1');
+        $customer_phone = $this->get_field_value($data, $billing_phone_field_type, $billing_phone_custom_field, 'billing_phone');
 
         // Shipping data
         $shipping_name = $this->get_field_value($data, $shipping_name_field_type, $shipping_name_custom_field, 'shipping_first_name', 'shipping_last_name');
@@ -53,6 +70,7 @@ class PluginMakerSR_Block_Customers_Checkout {
         error_log('Customer Name: ' . $customer_name);
         error_log('Customer ZIP: ' . $customer_zip);
         error_log('Customer Address: ' . $customer_address);
+        error_log('Customer Phone: ' . $customer_phone);
         error_log('Shipping Name: ' . $shipping_name);
         error_log('Shipping ZIP: ' . $shipping_zip);
         error_log('Shipping Address: ' . $shipping_address);
@@ -98,6 +116,14 @@ class PluginMakerSR_Block_Customers_Checkout {
                     $zip_street_combo = $customer_zip . '|' . $customer_address;
                     $shipping_zip_street_combo = $shipping_zip . '|' . $shipping_address;
                     if ($zip_street_combo === $block_value || $shipping_zip_street_combo === $block_value) {
+                        $errors->add('validation', 'You are not allowed to place orders.');
+                        break 2;
+                    }
+                    break;
+                case 'phone':
+                    $block_phone = $this->normalize_phone($block_value);
+                    $customer_phone_normalized = $this->normalize_phone($customer_phone);
+                    if ($customer_phone_normalized === $block_phone) {
                         $errors->add('validation', 'You are not allowed to place orders.');
                         break 2;
                     }
