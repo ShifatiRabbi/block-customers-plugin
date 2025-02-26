@@ -3,9 +3,10 @@
 
     <?php
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $license_manager = new PluginMakerSR_Block_Customers_License();
+
         if (isset($_POST['validate_license'])) {
             $license_key = sanitize_text_field($_POST['license_key']);
-            $license_manager = new PluginMakerSR_Block_Customers_License();
             $validation_result = $license_manager->validate_license($license_key);
 
             if ($validation_result['success']) {
@@ -16,7 +17,6 @@
         }
 
         if (isset($_POST['revoke_license'])) {
-            $license_manager = new PluginMakerSR_Block_Customers_License();
             $revocation_result = $license_manager->revoke_license();
 
             if ($revocation_result['success']) {
@@ -29,11 +29,16 @@
 
     $license_key = get_option('pluginmakersr_license_key', '');
     $license_status = get_option('pluginmakersr_license_status', 'inactive');
+    $license_data = get_option('pluginmakersr_license_data', []);
     ?>
 
     <div class="license-info">
         <p><strong>License Status:</strong> <?php echo esc_html($license_status === 'active' ? 'Active' : 'Inactive'); ?></p>
         <p><strong>License Key:</strong> <?php echo esc_html($license_key); ?></p>
+        <?php if (!empty($license_data)) : ?>
+            <p><strong>Remaining Days:</strong> <?php echo esc_html($license_data['remaining_days']); ?></p>
+            <p><strong>Remaining Websites:</strong> <?php echo esc_html($license_data['remaining_websites']); ?></p>
+        <?php endif; ?>
     </div>
 
     <form method="POST" class="license-form">

@@ -4,35 +4,70 @@ if (!defined('ABSPATH')) {
 }
 
 class PluginMakerSR_Block_Customers_License {
-    public function validate_license($license_key) {
-        // Placeholder for license validation logic
-        // Replace this with actual API call to your admin panel
-        $validation_result = [
-            'success' => true,
-            'message' => 'License validated successfully!',
-        ];
+    private $api_url = 'https://sakersir.3dimensionbd.com/wp-json/block-customers/v1/';
 
-        if ($validation_result['success']) {
-            update_option('pluginmakersr_license_key', $license_key);
-            update_option('pluginmakersr_license_status', 'active');
+    public function validate_license($license_key) {
+        $response = wp_remote_post($this->api_url . 'validate_license', [
+            'body' => [
+                'license_key' => $license_key,
+                'site_url' => home_url(),
+            ],
+        ]);
+
+        if (is_wp_error($response)) {
+            return [
+                'success' => false,
+                'message' => 'Failed to connect to the license server.',
+            ];
         }
 
-        return $validation_result;
+        $body = json_decode($response['body'], true);
+
+        if ($body['success']) {
+            update_option('pluginmakersr_license_key', $license_key);
+            update_option('pluginmakersr_license_status', 'active');
+            update_option('pluginmakersr_license_data', $body['data']);
+        }
+
+        return $body;
     }
 
     public function revoke_license() {
-        // Placeholder for license revocation logic
-        // Replace this with actual API call to your admin panel
-        $revocation_result = [
-            'success' => true,
-            'message' => 'License revoked successfully!',
-        ];
+        $license_key = get_option('pluginmakersr_license_key', '');
 
-        if ($revocation_result['success']) {
-            delete_option('pluginmakersr_license_key');
-            update_option('pluginmakersr_license_status', 'inactive');
+        if (empty($license_key)) {
+            return [
+                'success' => false,
+                'message' => 'No license key found.',
+            ];
         }
 
-        return $revocation_result;
+        $response = wp_remote_post($this->api_url . 'revoke_license', [
+            'body' => [
+                'license_key' => $license_key,
+                'site_url' => home_url(),
+            ],
+        ]);
+
+        if (is_wp_error($response)) {
+            return [
+                'success' => false,
+                'message' => 'Failed to connect to the license server.',
+            ];
+        }
+
+        $body = json_decode($response['body'], true);
+
+        if ($body['success']) {
+            delete_option('pluginmakersr_license_key');
+            update_option('pluginmakersr_license_status', 'inactive');
+            delete_option('pluginmakersr_license_data');
+        }
+
+        return $body;
+    }
+
+    public function get_license_data() {
+        return get_option('pluginmakersr_license_data', []);
     }
 }
