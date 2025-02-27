@@ -1,3 +1,4 @@
+<!-- class-block-list.php -->
 <?php
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -5,10 +6,16 @@ if (!defined('ABSPATH')) {
 
 class PluginMakerSR_Block_Customers_Block_List {
     private $block_list = [];
-    private $max_entries = 30;
+    private $max_entries;
 
     public function __construct() {
         $this->block_list = get_option('pluginmakersr_block_list', []);
+        $this->max_entries = $this->get_max_entries_based_on_license();
+    }
+
+    private function get_max_entries_based_on_license() {
+        $license_status = get_option('pluginmakersr_license_status', 'inactive');
+        return ($license_status === 'active') ? 99999999 : 30;
     }
 
     private function normalize_phone($phone) {
