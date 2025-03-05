@@ -1,3 +1,4 @@
+<!-- class-checkout.php -->
 <?php
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -15,8 +16,6 @@ class PluginMakerSR_Block_Customers_Checkout {
         $phone = preg_replace('/[^0-9]/', '', $phone);
 
         // Remove leading zeros (if any) and ensure the phone number starts with the country code
-        // Example: 01712345678 -> 1712345678 (for Bangladesh)
-        // You can customize this logic based on your country's phone number format
         if (strlen($phone) > 10) {
             $phone = ltrim($phone, '0');
         }

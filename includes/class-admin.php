@@ -19,6 +19,16 @@ class PluginMakerSR_Block_Customers_Admin {
             'dashicons-shield-alt',
             20
         );
+        
+        // Add a submenu for import/export
+        add_submenu_page(
+            'pluginmakersr-block-customers',
+            'Import/Export',
+            'Import/Export',
+            'manage_options',
+            'pluginmakersr-block-customers-import-export',
+            [$this, 'import_export_page']
+        );
 
         // Add a submenu for settings
         add_submenu_page(
@@ -66,5 +76,14 @@ class PluginMakerSR_Block_Customers_Admin {
 
         // Load the license management page template
         include plugin_dir_path(__FILE__) . '../templates/license-management.php';
+    }
+
+    public function import_export_page() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        // Load the import/export page template
+        include plugin_dir_path(__FILE__) . '../templates/import-export.php';
     }
 }

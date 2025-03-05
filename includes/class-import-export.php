@@ -17,6 +17,14 @@ class PluginMakerSR_Block_Customers_Import_Export {
             return;
         }
 
+        // Check license status
+        $license_status = get_option('pluginmakersr_license_status', 'inactive');
+        $is_license_active = ($license_status === 'active');
+
+        if (!$is_license_active) {
+            return; // Exit if license is not active
+        }
+
         // Export JSON
         if (isset($_POST['export_json'])) {
             $this->export_json();
@@ -158,78 +166,4 @@ class PluginMakerSR_Block_Customers_Import_Export {
         }
     }
 
-    /**
-     * Render import/export buttons and collapsible sections.
-     */
-    public static function render_buttons() {
-        ?>
-        <style>
-            .collapsible {
-                background-color: #f1f1f1;
-                color: #333;
-                cursor: pointer;
-                padding: 10px;
-                width: 100%;
-                border: none;
-                text-align: left;
-                outline: none;
-                font-size: 15px;
-                margin-bottom: 10px;
-            }
-
-            .collapsible:hover {
-                background-color: #ddd;
-            }
-
-            .content {
-                padding: 10px;
-                display: none;
-                overflow: hidden;
-                background-color: #f9f9f9;
-                border: 1px solid #ddd;
-                margin-bottom: 10px;
-            }
-        </style>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var coll = document.getElementsByClassName('collapsible');
-                for (var i = 0; i < coll.length; i++) {
-                    coll[i].addEventListener('click', function() {
-                        this.classList.toggle('active');
-                        var content = this.nextElementSibling;
-                        if (content.style.display === 'block') {
-                            content.style.display = 'none';
-                        } else {
-                            content.style.display = 'block';
-                        }
-                    });
-                }
-            });
-        </script>
-
-        <button type="button" class="collapsible" style="background-color: #FF0000; width: 30%; text-align: center; font-weight: bold;">Export</button>
-        <div class="content">
-            <form method="POST" style="margin-bottom: 10px;">
-                <button type="submit" name="export_json" class="button button-primary" style="background-color: #FFA500; color: white;">Export as JSON</button>
-                <button type="submit" name="export_excel" class="button button-primary" style="background-color: #008000; color: white;">Export as Excel</button>
-            </form>
-        </div>
-        <br>
-        <button type="button" class="collapsible" style="color: #FFFFFF; background-color: #0000FF; width: 30%;  text-align: center; font-weight: bold;">Import</button>
-        <div class="content">
-            <form method="POST" enctype="multipart/form-data" style="margin-bottom: 10px;">
-                <h4>Import as JSON</h4>
-                <input type="file" name="import_file_json" accept=".json" required>
-                <button type="submit" name="import_json" class="button button-primary" style="background-color: #FFA500; color: white;">Import JSON</button>
-            </form>
-
-            <form method="POST" enctype="multipart/form-data" style="margin-bottom: 10px;">
-                <h4>Import as Excel</h4>
-                <input type="file" name="import_file_excel" accept=".csv" required>
-                <button type="submit" name="import_excel" class="button button-primary" style="background-color: #008000; color: white;">Import Excel</button>
-            </form>
-        </div>
-        <?php
-    }
 }

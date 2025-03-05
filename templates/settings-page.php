@@ -115,10 +115,10 @@ $shipping_address_custom_field = get_option('pluginmakersr_shipping_address_cust
                 <th scope="row">Name Field</th>
                 <td>
                     <label>
-                        <input type="radio" name="shipping_name_field_type" value="default" <?php checked($shipping_name_field_type, 'default'); ?>> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Default
+                        <input type="radio" name="shipping_name_field_type" value="default" <?php checked($shipping_name_field_type, 'default'); ?> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Default
                     </label>
                     <label>
-                        <input type="radio" name="shipping_name_field_type" value="custom" <?php checked($shipping_name_field_type, 'custom'); ?>> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Custom
+                        <input type="radio" name="shipping_name_field_type" value="custom" <?php checked($shipping_name_field_type, 'custom'); ?> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Custom
                     </label>
                     <input type="text" name="shipping_name_custom_field" value="<?php echo esc_attr($shipping_name_custom_field); ?>" <?php echo ($shipping_name_field_type === 'default' || !$is_license_active) ? 'disabled' : ''; ?>>
                 </td>
@@ -127,10 +127,10 @@ $shipping_address_custom_field = get_option('pluginmakersr_shipping_address_cust
                 <th scope="row">ZIP Code Field</th>
                 <td>
                     <label>
-                        <input type="radio" name="shipping_zip_field_type" value="default" <?php checked($shipping_zip_field_type, 'default'); ?>> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Default
+                        <input type="radio" name="shipping_zip_field_type" value="default" <?php checked($shipping_zip_field_type, 'default'); ?> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Default
                     </label>
                     <label>
-                        <input type="radio" name="shipping_zip_field_type" value="custom" <?php checked($shipping_zip_field_type, 'custom'); ?>> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Custom
+                        <input type="radio" name="shipping_zip_field_type" value="custom" <?php checked($shipping_zip_field_type, 'custom'); ?> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Custom
                     </label>
                     <input type="text" name="shipping_zip_custom_field" value="<?php echo esc_attr($shipping_zip_custom_field); ?>" <?php echo ($shipping_zip_field_type === 'default' || !$is_license_active) ? 'disabled' : ''; ?>>
                 </td>
@@ -139,10 +139,10 @@ $shipping_address_custom_field = get_option('pluginmakersr_shipping_address_cust
                 <th scope="row">Address Field</th>
                 <td>
                     <label>
-                        <input type="radio" name="shipping_address_field_type" value="default" <?php checked($shipping_address_field_type, 'default'); ?>> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Default
+                        <input type="radio" name="shipping_address_field_type" value="default" <?php checked($shipping_address_field_type, 'default'); ?> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Default
                     </label>
                     <label>
-                        <input type="radio" name="shipping_address_field_type" value="custom" <?php checked($shipping_address_field_type, 'custom'); ?>> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Custom
+                        <input type="radio" name="shipping_address_field_type" value="custom" <?php checked($shipping_address_field_type, 'custom'); ?> <?php echo !$is_license_active ? 'disabled' : ''; ?>> Custom
                     </label>
                     <input type="text" name="shipping_address_custom_field" value="<?php echo esc_attr($shipping_address_custom_field); ?>" <?php echo ($shipping_address_field_type === 'default' || !$is_license_active) ? 'disabled' : ''; ?>>
                 </td>

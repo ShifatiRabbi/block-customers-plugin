@@ -15,7 +15,7 @@ class PluginMakerSR_Block_Customers_Block_List {
 
     private function get_max_entries_based_on_license() {
         $license_status = get_option('pluginmakersr_license_status', 'inactive');
-        return ($license_status === 'active') ? 99999999 : 30;
+        return ($license_status === 'active') ? 99999999 : 70;
     }
 
     private function normalize_phone($phone) {

@@ -1,0 +1,7 @@
+
+/* ----------------------------------------------------- */
+.woocommerce-js .blockUI.blockOverlay {
+    position: relative !important;
+    opacity: 0 !important;
+    z-index: 1 !important;
+}
