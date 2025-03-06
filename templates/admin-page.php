@@ -1,4 +1,3 @@
-<!-- admin-page.php -->
 <div class="wrap">
     <h1>Block Customers</h1>
 

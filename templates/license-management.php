@@ -1,4 +1,3 @@
-<!-- license-management.php -->
 <div class="wrap">
     <h1>License Management</h1>
 
