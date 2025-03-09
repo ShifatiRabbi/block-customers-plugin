@@ -18,7 +18,7 @@
                 <div class="notice notice-error">
                     <p>Max block entries reached.
                         <button style="background-color: white; padding: 10px 15px;"> 
-                            <a href="https://pluginmaker.3dimensionbd.com/product/33/" target="_blank" style="text-decoration: none; color: black; padding: 10px 15px;">Please buy the premium pack</a>
+                            <a href="https://inovitstore.com/product/block-customers/" target="_blank" style="text-decoration: none; color: black; padding: 10px 15px;">Please buy the premium pack</a>
                         </button> to add unlimited entries.
                     </p>
                 </div>';

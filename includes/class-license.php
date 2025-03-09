@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
 }
 
 class PluginMakerSR_Block_Customers_License {
-    private $api_url = 'https://sakersir.3dimensionbd.com/wp-json/block-customers/v1/';
+    private $api_url = 'https://inovitstore.com/wp-json/block-customers/v1/';
 
     public function validate_license($license_key) {
         $response = wp_remote_post($this->api_url . 'validate_license', [
